@@ -1,0 +1,136 @@
+<div class="container">
+    <mat-card class="dashboard-card">
+        <mat-card-header>
+            <mat-card-title>Sales Analytics Dashboard</mat-card-title>
+            <mat-card-subtitle>Revenue by Product Hierarchy</mat-card-subtitle>
+            <div class="export-buttons">
+                <button mat-raised-button [matMenuTriggerFor]="exportMenu" [disabled]="exportLoading">
+                    <mat-icon>file_download</mat-icon>
+                    Export
+                </button>
+                <mat-menu #exportMenu="matMenu">
+                    <button mat-menu-item (click)="exportChart('PNG')">
+                        <mat-icon>image</mat-icon>
+                        Export Chart as PNG
+                    </button>
+                    <button mat-menu-item (click)="exportChart('CSV')">
+                        <mat-icon>grid_on</mat-icon>
+                        Export Data as CSV
+                    </button>
+                </mat-menu>
+            </div>
+        </mat-card-header>
+
+        <mat-divider></mat-divider>
+
+        <mat-card-content>
+            <!-- Filters Row -->
+            <div class="filters-container">
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>Date Range</mat-label>
+                    <mat-date-range-input [rangePicker]="picker" [formGroup]="dateRange">
+                        <input matStartDate formControlName="start" placeholder="Start date">
+                        <input matEndDate formControlName="end" placeholder="End date">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>Brands</mat-label>
+                    <mat-select [formControl]="brandFilter" multiple>
+                        <mat-option *ngFor="let brand of brands" [value]="brand">{{brand}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>Retailers</mat-label>
+                    <mat-select [formControl]="retailerFilter" multiple>
+                        <mat-option *ngFor="let retailer of retailers" [value]="retailer">{{retailer}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>Categories</mat-label>
+                    <mat-select [formControl]="categoryFilter" multiple>
+                        <mat-option *ngFor="let category of categories" [value]="category">{{category}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <button mat-raised-button color="primary" (click)="updateDashboard()" class="apply-button">
+                    <mat-icon>refresh</mat-icon>
+                    Apply Filters
+                </button>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="charts-container">
+                <div class="chart-wrapper" *ngIf="brandRevenueData.length > 0">
+                    <h3>Revenue by Brand</h3>
+                    <ngx-charts-bar-vertical [results]="brandRevenueData" [scheme]="colorScheme" [xAxis]="true"
+                        [yAxis]="true" [showXAxisLabel]="true" [showYAxisLabel]="true" xAxisLabel="Brand"
+                        yAxisLabel="Revenue ($)" [gradient]="true">
+                    </ngx-charts-bar-vertical>
+                </div>
+
+
+                <div class="chart-wrapper">
+                    <h3>Revenue by Category</h3>
+                    <ngx-charts-pie-chart [results]="categoryDistributionData" [labels]="true" [doughnut]="true">
+                    </ngx-charts-pie-chart>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="table-container">
+                <h3>Sales Details</h3>
+                <mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+                    <!-- Product Column -->
+                    <ng-container matColumnDef="product">
+                        <mat-header-cell *matHeaderCellDef>Product SKU</mat-header-cell>
+                        <mat-cell *matCellDef="let item">{{item.product}}</mat-cell>
+                    </ng-container>
+
+                    <!-- Brand Column -->
+                    <ng-container matColumnDef="brand">
+                        <mat-header-cell *matHeaderCellDef>Brand</mat-header-cell>
+                        <mat-cell *matCellDef="let item">{{item.brand}}</mat-cell>
+                    </ng-container>
+
+                    <!-- Category Column -->
+                    <ng-container matColumnDef="category">
+                        <mat-header-cell *matHeaderCellDef>Category</mat-header-cell>
+                        <mat-cell *matCellDef="let item">{{item.category}}</mat-cell>
+                    </ng-container>
+
+                    <!-- Retailer Column -->
+                    <ng-container matColumnDef="retailer">
+                        <mat-header-cell *matHeaderCellDef>Retailer</mat-header-cell>
+                        <mat-cell *matCellDef="let item">{{item.retailer}}</mat-cell>
+                    </ng-container>
+
+                    <!-- Quantity Column -->
+                    <ng-container matColumnDef="quantity">
+                        <mat-header-cell *matHeaderCellDef>Qty</mat-header-cell>
+                        <mat-cell *matCellDef="let item">{{item.quantity}}</mat-cell>
+                    </ng-container>
+
+                    <!-- Price Column -->
+                    <ng-container matColumnDef="price">
+                        <mat-header-cell *matHeaderCellDef>Unit Price</mat-header-cell>
+                        <mat-cell *matCellDef="let item">${{item.price}}</mat-cell>
+                    </ng-container>
+
+                    <!-- Revenue Column -->
+                    <ng-container matColumnDef="revenue">
+                        <mat-header-cell *matHeaderCellDef>Revenue</mat-header-cell>
+                        <mat-cell *matCellDef="let item">${{item.revenue}}</mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

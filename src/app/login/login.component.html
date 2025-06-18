@@ -1,0 +1,46 @@
+<div class="login-container">
+    <mat-card class="login-card">
+        <div class="card-header">
+            <div class="logo-container">
+                <mat-icon class="logo">lock</mat-icon>
+                <h1>Welcome Back</h1>
+            </div>
+            <p>Please login to your account</p>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email" required>
+                <mat-icon matSuffix>alternate_email</mat-icon>
+                <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+                    Email is required
+                </mat-error>
+                <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+                    Please enter a valid email
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Password</mat-label>
+                <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" required>
+                <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword"
+                    [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+                    <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                    Password is required
+                </mat-error>
+            </mat-form-field>
+
+            <div class="remember-forgot">
+                <mat-checkbox formControlName="rememberMe">Remember me</mat-checkbox>
+                <a href="#" class="forgot-password">Forgot password?</a>
+            </div>
+
+            <button mat-raised-button class="login-button" type="submit" [disabled]="!loginForm.valid">
+                Login
+            </button>
+        </form>
+    </mat-card>
+</div>

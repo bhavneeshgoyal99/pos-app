@@ -1,0 +1,22 @@
+<h1 mat-dialog-title>Marketing Activity Photos</h1>
+<div mat-dialog-content class="photo-viewer">
+  <div class="navigation-buttons">
+    <button mat-icon-button (click)="prevPhoto()" [disabled]="data.photos.length <= 1">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+  </div>
+
+  <div class="photo-container">
+    <img [src]="data.photos[currentIndex]" class="main-photo">
+    <div class="photo-counter">{{currentIndex + 1}} of {{data.photos.length}}</div>
+  </div>
+
+  <div class="navigation-buttons">
+    <button mat-icon-button (click)="nextPhoto()" [disabled]="data.photos.length <= 1">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+</div>

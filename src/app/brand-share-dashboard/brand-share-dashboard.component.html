@@ -1,0 +1,152 @@
+<div class="container">
+  <mat-card class="dashboard-card">
+    <mat-card-header>
+      <mat-card-title>Brand Share Analysis</mat-card-title>
+      <mat-card-subtitle>Competitive brand exposure metrics</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+      <!-- Filters Row -->
+      <div class="filters-container">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Category</mat-label>
+          <mat-select [(ngModel)]="selectedCategory" (ngModelChange)="onFilterChange()">
+            <mat-option [value]="">All Categories</mat-option>
+            <mat-option *ngFor="let cat of categories" [value]="cat">{{cat}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Subcategory</mat-label>
+          <mat-select [(ngModel)]="selectedSubcategory" (ngModelChange)="onFilterChange()" 
+                     [disabled]="!selectedCategory">
+            <mat-option [value]="">All Subcategories</mat-option>
+            <mat-option *ngFor="let subcat of subcategories" [value]="subcat">{{subcat}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Brand</mat-label>
+          <mat-select [(ngModel)]="selectedBrand" (ngModelChange)="onFilterChange()">
+            <mat-option [value]="">All Brands</mat-option>
+            <mat-option *ngFor="let brand of brands" [value]="brand">{{brand}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- View Toggle -->
+      <mat-button-toggle-group [(ngModel)]="currentView" (ngModelChange)="analyzeData()" 
+                             class="view-toggle">
+        <mat-button-toggle value="subcategory" [disabled]="!selectedSubcategory">
+          Subcategory View
+        </mat-button-toggle>
+        <mat-button-toggle value="category">
+          Category View
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+
+      <!-- Chart Type Toggle -->
+      <mat-button-toggle-group [(ngModel)]="chartType" class="chart-toggle">
+        <mat-button-toggle value="vertical-bar">Bar Chart</mat-button-toggle>
+        <mat-button-toggle value="pie">Pie Chart</mat-button-toggle>
+        <mat-button-toggle value="advanced-pie">Advanced Pie</mat-button-toggle>
+      </mat-button-toggle-group>
+
+      <!-- Analysis Results -->
+      <div class="results-container" *ngIf="currentResults.length">
+        <h3 class="results-title">{{chartTitle}}</h3>
+
+        <div class="chart-container">
+          <!-- Vertical Bar Chart -->
+          <ngx-charts-bar-vertical
+            *ngIf="chartType === 'vertical-bar'"
+            [view]="chartOptions.view"
+            [scheme]="chartOptions.colorScheme"
+            [results]="currentResults"
+            [gradient]="chartOptions.gradient"
+            [xAxis]="chartOptions.showXAxis"
+            [yAxis]="chartOptions.showYAxis"
+            [legend]="chartOptions.showLegend"
+            [legendPosition]="chartOptions.legendPosition"
+            [legendTitle]="chartOptions.legendTitle"
+            [showXAxisLabel]="chartOptions.showXAxisLabel"
+            [showYAxisLabel]="chartOptions.showYAxisLabel"
+            [xAxisLabel]="chartOptions.xAxisLabel"
+            [yAxisLabel]="chartOptions.yAxisLabel"
+            [animations]="chartOptions.animations"
+            (select)="onSelectChartItem($event)">
+          </ngx-charts-bar-vertical>
+
+          <!-- Pie Chart -->
+          <ngx-charts-pie-chart
+            *ngIf="chartType === 'pie'"
+            [view]="chartOptions.view"
+            [scheme]="chartOptions.colorScheme"
+            [results]="currentResults"
+            [legend]="chartOptions.showLegend"
+            [legendPosition]="chartOptions.legendPosition"
+            [legendTitle]="chartOptions.legendTitle"
+            [labels]="chartOptions.showDataLabel"
+            [doughnut]="false"
+            [animations]="chartOptions.animations"
+            (select)="onSelectChartItem($event)">
+          </ngx-charts-pie-chart>
+
+          <!-- Advanced Pie Chart -->
+          <ngx-charts-advanced-pie-chart
+            *ngIf="chartType === 'advanced-pie'"
+            [view]="chartOptions.view"
+            [scheme]="chartOptions.colorScheme"
+            [results]="currentResults"
+            [gradient]="chartOptions.gradient"
+            [animations]="chartOptions.animations"
+            (select)="onSelectChartItem($event)">
+          </ngx-charts-advanced-pie-chart>
+        </div>
+
+        <!-- Data Table -->
+        <div class="table-container">
+          <table mat-table [dataSource]="currentResults" class="mat-elevation-z2">
+            <!-- Rank Column -->
+            <ng-container matColumnDef="rank">
+              <th mat-header-cell *matHeaderCellDef> Rank </th>
+              <td mat-cell *matCellDef="let element; let i = index"> {{i + 1}} </td>
+            </ng-container>
+            
+            <!-- Brand Column -->
+            <ng-container matColumnDef="brand">
+              <th mat-header-cell *matHeaderCellDef> Brand </th>
+              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+            
+            <!-- Share Column -->
+            <ng-container matColumnDef="share">
+              <th mat-header-cell *matHeaderCellDef> Share </th>
+              <td mat-cell *matCellDef="let element">
+                {{element.value | number:'1.2-2'}}%
+                <mat-progress-bar mode="determinate" [value]="element.value">
+                </mat-progress-bar>
+              </td>
+            </ng-container>
+            
+            <!-- Exposure Column -->
+            <ng-container matColumnDef="exposure">
+              <th mat-header-cell *matHeaderCellDef> Exposure </th>
+              <td mat-cell *matCellDef="let element"> {{element.extra?.exposureCount}} </td>
+            </ng-container>
+            
+            <tr mat-header-row *matHeaderRowDef="['rank', 'brand', 'share', 'exposure']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['rank', 'brand', 'share', 'exposure'];"></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="no-results" *ngIf="!currentResults.length">
+        <mat-icon>info</mat-icon>
+        <p>No brand share data available for the selected filters</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

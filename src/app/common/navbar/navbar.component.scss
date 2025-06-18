@@ -1,0 +1,82 @@
+@use '@angular/material' as mat;
+
+mat-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0 24px;
+  height: 64px;
+
+  .navbar-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .branding {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    
+    .logo-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+
+    .brand-name {
+      font-size: 18px;
+      font-weight: 500;
+      margin-left: 8px;
+    }
+  }
+
+  .nav-items {
+    display: flex;
+    gap: 4px;
+    margin-left: 24px;
+
+    .nav-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 64px;
+      border-radius: 0;
+      
+      mat-icon {
+        margin-right: 4px;
+      }
+    }
+
+    .active-link {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-bottom: 3px solid white;
+    }
+  }
+
+  .user-menu {
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+}
+
+// Mobile responsive styles
+@media (max-width: 768px) {
+  mat-toolbar {
+    padding: 0 12px;
+    
+    .brand-name {
+      display: none;
+    }
+
+    .nav-items {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,93 @@
+@use '@angular/material' as mat;
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 450px;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    background: white;
+}
+
+.card-header {
+    text-align: center;
+    margin-bottom: 30px;
+
+    h1 {
+        margin: 15px 0 5px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    p {
+        color: #666;
+        margin: 0;
+        font-size: 14px;
+    }
+}
+
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .logo {
+        font-size: 48px;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(45deg, #3f51b5, #2196f3);
+        color: white;
+        border-radius: 50%;
+        margin-bottom: 10px;
+    }
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .forgot-password {
+        color: #3f51b5;
+        text-decoration: none;
+        font-size: 14px;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.login-button {
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+

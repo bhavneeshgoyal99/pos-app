@@ -1,0 +1,123 @@
+<div class="container">
+  <mat-card class="dashboard-card">
+    <mat-card-header>
+      <mat-card-title>Stock Status Dashboard</mat-card-title>
+      <mat-card-subtitle>Product Availability Analysis</mat-card-subtitle>
+      <div class="export-buttons">
+        <button mat-raised-button (click)="exportData('CSV')" [disabled]="exportLoading">
+          <mat-icon>file_download</mat-icon>
+          Export CSV
+        </button>
+      </div>
+    </mat-card-header>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+      <!-- Filters Row -->
+      <div class="filters-container">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Date Range</mat-label>
+          <mat-date-range-input [rangePicker]="picker" [formGroup]="dateRange">
+            <input matStartDate formControlName="start" placeholder="Start date">
+            <input matEndDate formControlName="end" placeholder="End date">
+          </mat-date-range-input>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Brands</mat-label>
+          <mat-select [formControl]="brandFilter" multiple>
+            <mat-option *ngFor="let brand of brands" [value]="brand">{{brand}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Retailers</mat-label>
+          <mat-select [formControl]="retailerFilter" multiple>
+            <mat-option *ngFor="let retailer of retailers" [value]="retailer">{{retailer}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="updateDashboard()" class="apply-button">
+          <mat-icon>refresh</mat-icon>
+          Apply Filters
+        </button>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="charts-container">
+        <div class="chart-wrapper">
+          <h3>Average Stock Levels by Brand</h3>
+          <ngx-charts-bar-vertical
+            [results]="stockLevelData"
+            [xAxis]="true"
+            [yAxis]="true"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="true"
+            xAxisLabel="Brand"
+            yAxisLabel="Average Units in Stock"
+            [gradient]="true">
+          </ngx-charts-bar-vertical>
+        </div>
+
+        <div class="chart-wrapper">
+          <h3>Out of Stock % by Retailer</h3>
+          <ngx-charts-bar-vertical
+            [results]="outOfStockData"
+            [xAxis]="true"
+            [yAxis]="true"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="true"
+            xAxisLabel="Retailer"
+            yAxisLabel="% Out of Stock"
+            [yScaleMax]="100"
+            [scheme]="'cool'">
+          </ngx-charts-bar-vertical>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="table-container">
+        <h3>Stock Details</h3>
+        <mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+          <!-- Product Column -->
+          <ng-container matColumnDef="product">
+            <mat-header-cell *matHeaderCellDef>Product SKU</mat-header-cell>
+            <mat-cell *matCellDef="let item">{{item.product}}</mat-cell>
+          </ng-container>
+
+          <!-- Brand Column -->
+          <ng-container matColumnDef="brand">
+            <mat-header-cell *matHeaderCellDef>Brand</mat-header-cell>
+            <mat-cell *matCellDef="let item">{{item.brand}}</mat-cell>
+          </ng-container>
+
+          <!-- Location Column -->
+          <ng-container matColumnDef="location">
+            <mat-header-cell *matHeaderCellDef>Store</mat-header-cell>
+            <mat-cell *matCellDef="let item">{{item.location}}</mat-cell>
+          </ng-container>
+
+          <!-- Stock Column -->
+          <ng-container matColumnDef="stock">
+            <mat-header-cell *matHeaderCellDef>Stock</mat-header-cell>
+            <mat-cell *matCellDef="let item">{{item.stock}}</mat-cell>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let item">
+              <span [class]="getStatusClass(item.status)">{{item.status}}</span>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

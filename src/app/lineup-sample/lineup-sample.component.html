@@ -1,0 +1,140 @@
+<div class="container">
+    <mat-card class="dashboard-card">
+        <mat-card-header>
+            <mat-card-title>Lineup Sample Placement</mat-card-title>
+            <mat-card-subtitle>Product Visibility Analysis</mat-card-subtitle>
+            <div class="export-buttons">
+                <button mat-raised-button (click)="exportData()" [disabled]="exportLoading">
+                    <mat-icon>file_download</mat-icon>
+                    Export Report
+                </button>
+            </div>
+        </mat-card-header>
+
+        <mat-divider></mat-divider>
+
+        <mat-card-content>
+            <!-- Filters Row -->
+            <div class="filters-container">
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>Date Range</mat-label>
+                    <mat-date-range-input [rangePicker]="picker" [formGroup]="dateRange">
+                        <input matStartDate formControlName="start" placeholder="Start date">
+                        <input matEndDate formControlName="end" placeholder="End date">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>Brands</mat-label>
+                    <mat-select [formControl]="brandFilter" multiple>
+                        <mat-option *ngFor="let brand of brands" [value]="brand">{{brand}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>Retailers</mat-label>
+                    <mat-select [formControl]="retailerFilter" multiple>
+                        <mat-option *ngFor="let retailer of retailers" [value]="retailer">{{retailer}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>Categories</mat-label>
+                    <mat-select [formControl]="categoryFilter" multiple>
+                        <mat-option *ngFor="let category of categories" [value]="category">{{category}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <button mat-raised-button color="primary" (click)="updateAnalysis()" class="apply-button">
+                    <mat-icon>refresh</mat-icon>
+                    Apply Filters
+                </button>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="charts-container">
+                <div class="chart-wrapper">
+                    <h3>Lineup Placement by Category</h3>
+                    <ngx-charts-bar-vertical [results]="categoryPerformanceData" [xAxis]="true" [yAxis]="true"
+                        [showXAxisLabel]="true" [showYAxisLabel]="true" xAxisLabel="Category" yAxisLabel="Placement %"
+                        [yScaleMax]="100" [scheme]="'forest'">
+                    </ngx-charts-bar-vertical>
+                </div>
+
+                <div class="chart-wrapper">
+                    <h3>Store Performance Distribution</h3>
+                    <ngx-charts-box-chart [results]="this.getBoxChartData()" [xAxis]="true" [yAxis]="true"
+                        [showXAxisLabel]="true" [showYAxisLabel]="true" yAxisLabel="Placement %">
+                        <!-- [yScaleMax]="100" -->
+                    </ngx-charts-box-chart>
+                </div>
+            </div>
+
+            <!-- POS Performance Table -->
+            <div class="table-container">
+                <h3>Store Performance Ranking</h3>
+                <mat-table [dataSource]="posPerformanceData" class="mat-elevation-z2">
+                    <!-- POS Name Column -->
+                    <ng-container matColumnDef="posName">
+                        <mat-header-cell *matHeaderCellDef (click)="sortData('posName')">Store
+                            <mat-icon *ngIf="sortField === 'posName'">
+                                {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+                            </mat-icon>
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let item">{{item.posName}}</mat-cell>
+                    </ng-container>
+
+                    <!-- Retailer Column -->
+                    <ng-container matColumnDef="retailer">
+                        <mat-header-cell *matHeaderCellDef>Retailer</mat-header-cell>
+                        <mat-cell *matCellDef="let item">{{item.retailer}}</mat-cell>
+                    </ng-container>
+
+                    <!-- Lineup Placement Column -->
+                    <ng-container matColumnDef="lineupPlacement">
+                        <mat-header-cell *matHeaderCellDef (click)="sortData('lineupPlacement')">Lineup Placement
+                            <mat-icon *ngIf="sortField === 'lineupPlacement'">
+                                {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+                            </mat-icon>
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let item">
+                            <span [class]="'placement-' + getPlacementColor(item.lineupPlacement)">
+                                {{item.lineupPlacement}}%
+                            </span>
+                        </mat-cell>
+                    </ng-container>
+
+                    <!-- Sample Placement Column -->
+                    <ng-container matColumnDef="samplePlacement">
+                        <mat-header-cell *matHeaderCellDef (click)="sortData('samplePlacement')">Sample Placement
+                            <mat-icon *ngIf="sortField === 'samplePlacement'">
+                                {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+                            </mat-icon>
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let item">
+                            <span [class]="'placement-' + getPlacementColor(item.samplePlacement)">
+                                {{item.samplePlacement}}%
+                            </span>
+                        </mat-cell>
+                    </ng-container>
+
+                    <!-- Details Column -->
+                    <ng-container matColumnDef="details">
+                        <mat-header-cell *matHeaderCellDef>Details</mat-header-cell>
+                        <mat-cell *matCellDef="let item">
+                            <button mat-button color="primary" (click)="viewPosDetails(item.posId)">
+                                <mat-icon>visibility</mat-icon>
+                                View
+                            </button>
+                        </mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
