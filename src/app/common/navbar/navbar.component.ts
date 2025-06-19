@@ -26,6 +26,7 @@ export class NavbarComponent {
     { path: '/reports/stock', icon: 'inventory_2', label: 'Stock' },
     { path: '/reports/lineup', icon: 'stacked_bar_chart', label: 'Lineup' },
     { path: '/reports/brands', icon: 'stacked_bar_chart', label: 'Brands' },
+    { path: '/reports/tma', icon: 'stacked_bar_chart', label: 'TMA' },
   ];
 
   userMenuItems = [

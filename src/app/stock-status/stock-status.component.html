@@ -64,17 +64,38 @@
 
         <div class="chart-wrapper">
           <h3>Out of Stock % by Retailer</h3>
-          <ngx-charts-bar-vertical
+          <ngx-charts-line-chart
             [results]="outOfStockData"
             [xAxis]="true"
             [yAxis]="true"
             [showXAxisLabel]="true"
             [showYAxisLabel]="true"
-            xAxisLabel="Retailer"
+            xAxisLabel="Week"
             yAxisLabel="% Out of Stock"
             [yScaleMax]="100"
-            [scheme]="'cool'">
-          </ngx-charts-bar-vertical>
+            [scheme]="'cool'"
+            [curve]="curve"
+            [autoScale]="true"
+            [legend]="true"
+            [showGridLines]="true">
+          </ngx-charts-line-chart>
+        </div>
+      </div>
+
+      <div class="products-container">
+        <h6>Total Products: {{ records.length }} | Selected: </h6>
+        <div class="card-grid">
+          <mat-card *ngFor="let record of records" class="record-card">
+            <img mat-card-image [src]="record.imageUrl" alt="Product image">
+            <mat-card-content class="card-content">
+              <p><strong>Retailer:</strong> {{ record.retailer }}</p>
+              <p><strong>Point of sale:</strong> {{ record.pointOfSale }}</p>
+              <p><strong>Product (SKU):</strong> {{ record.sku }}</p>
+              <p><strong>Date:</strong> {{ record.date }}</p>
+            </mat-card-content>
+              <mat-checkbox class="product-checkbox" [checked]="selectedProducts.includes(record.sku)"
+  (change)="toggleSelectedProduct(record)"></mat-checkbox>
+          </mat-card>
         </div>
       </div>
 

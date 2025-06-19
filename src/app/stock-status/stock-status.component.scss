@@ -107,3 +107,33 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+.products-container {
+  margin-top: 60px;
+
+  .card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .record-card {
+    width: 24%;
+    position: relative;
+  
+    p {
+      margin-bottom: 0px;
+    }
+
+    .card-content {
+      gap: 8px;
+    }
+
+    .product-checkbox {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+    }
+  }
+}
